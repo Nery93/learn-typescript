@@ -142,6 +142,8 @@ processarPedido("enviado");
 
 // ---------- Generics básicos ----------
 
+// Significa que a função pode trabalhar com qualquer tipo, 
+// e o tipo é definido quando a função é chamada.
 function primeiroDoArray<T>(itens: T[]): T {
   return itens[0];
 }
@@ -150,6 +152,8 @@ console.log(primeiroDoArray<number>([1, 2, 3])); // 1
 console.log(primeiroDoArray<string>(["a", "b"])); // "a"
 
 // generic com interface
+// Significa que a interface pode ter qualquer tipo de conteúdo,
+// e o tipo é definido quando a interface é usada.
 interface Caixa<T> {
   conteudo: T;
 }

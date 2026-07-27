@@ -1,49 +1,39 @@
-import http from "http";
+
 import { criarTarefaController, listarTarefasController, buscarTarefaPorIdController, atualizarTarefaController, deletarTarefaController } from "./controllers/task.controller";
+import express from "express";
+
+const app = express(); // Inicializa o Express
+app.use(express.json()); // Middleware para parsear JSON
 
 const PORT: number = 3000;
 
-const server = http.createServer((req, res) => {
-
-    // Roteamento básico para as rotas de tarefas
-    if (req.method === "GET" && req.url === "/tarefas") {
-        listarTarefasController(req, res);
-        return;
-    }
-
-    // Roteamento para criar uma nova tarefa
-    if (req.method === "POST" && req.url === "/tarefas") {
-        criarTarefaController(req, res);
-        return;
-    }
-
-    // Roteamento para buscar uma tarefa por id
-    if (req.method === "GET" && req.url?.startsWith("/tarefas/")) {
-        const id = parseInt(req.url.split("/")[2], 10);
-        buscarTarefaPorIdController(req, res, id);
-        return;
-    }
-
-    // Roteamento para atualizar uma tarefa existente
-    if (req.method === "PUT" && req.url?.startsWith("/tarefas/")) {
-        const id = parseInt(req.url.split("/")[2], 10);
-        atualizarTarefaController(req, res, id);
-        return;
-    }
-
-    // Roteamento para deletar uma tarefa existente
-    if (req.method === "DELETE" && req.url?.startsWith("/tarefas/")) {
-        const id = parseInt(req.url.split("/")[2], 10);
-        deletarTarefaController(req, res, id);
-        return;
-    }
-
-
-    res.statusCode = 404;
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({ message: 'Not Found' }));
+app.get("/tarefas", (req, res) => {
+    listarTarefasController(req, res);
 });
 
-server.listen(PORT, () => {
+app.post("/tarefas", (req, res) => {
+    criarTarefaController(req, res);
+});
+
+app.get("/tarefas/:id", (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    buscarTarefaPorIdController(req, res, id); // A função já lida com a resposta, 
+    // então não precisamos enviar outra resposta aqui
+});
+
+app.put("/tarefas/:id", (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    atualizarTarefaController(req, res, id);
+    // A função já lida com a resposta, então não precisamos enviar outra resposta aqui
+});
+
+app.delete("/tarefas/:id", (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    deletarTarefaController(req, res, id);
+    // A função já lida com a resposta, então não precisamos enviar outra resposta aqui
+});
+
+app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}/`);
 });
+
