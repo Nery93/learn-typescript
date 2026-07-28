@@ -1,6 +1,6 @@
 
 import { atualizarTarefaExistente, buscarTarefaPorId, criarNovaTarefa, listarTodasTarefas, deletarTarefaExistente } from "../services/task.service";
-import type { Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 // Listar todas as tarefas
 export function listarTarefasController(req: Request, res: Response): void {
@@ -9,18 +9,17 @@ export function listarTarefasController(req: Request, res: Response): void {
 }
 
 // Criar uma nova tarefa
-export function criarTarefaController(req: Request, res: Response): void {
+export function criarTarefaController(req: Request, res: Response, next: NextFunction): void {
     try {
         const novaTarefa = criarNovaTarefa(req.body); // req.body já vem pronto do express.json()
         res.status(201).json(novaTarefa);
     } catch (error) {
-        const mensagemErro = error instanceof Error ? error.message : "Erro desconhecido";
-        res.status(400).json({ message: mensagemErro });
+        next(error); // Passa o erro para o middleware de tratamento de erros
     }
 }
 
 // Buscar tarefa por id
-export function buscarTarefaPorIdController(req: Request, res: Response, id: number): void {
+export function buscarTarefaPorIdController(req: Request, res: Response, id: number, next: NextFunction): void {
     try {
         const tarefa = buscarTarefaPorId(id);
         if (tarefa) {
@@ -29,13 +28,12 @@ export function buscarTarefaPorIdController(req: Request, res: Response, id: num
             res.status(404).json({ message: "Tarefa não encontrada" });
         }
     } catch (error) {
-        const mensagemErro = error instanceof Error ? error.message : "Erro desconhecido";
-        res.status(400).json({ message: mensagemErro });
+        next(error); // Passa o erro para o middleware de tratamento de erros
     }
 }
 
 // Atualizar uma tarefa existente
-export function atualizarTarefaController(req: Request, res: Response, id: number): void {
+export function atualizarTarefaController(req: Request, res: Response, id: number, next: NextFunction): void {
     try {
         const tarefa = atualizarTarefaExistente(id, req.body);
         if (!tarefa) {
@@ -44,13 +42,12 @@ export function atualizarTarefaController(req: Request, res: Response, id: numbe
         }
         res.status(200).json(tarefa);
     } catch (error) {
-        const mensagemErro = error instanceof Error ? error.message : "Erro desconhecido";
-        res.status(400).json({ message: mensagemErro });
+        next(error); // Passa o erro para o middleware de tratamento de erros
     }
 }
 
 // Deletar tarefa existente
-export function deletarTarefaController(req: Request, res: Response, id: number): void {
+export function deletarTarefaController(req: Request, res: Response, id: number, next: NextFunction): void {
     try {
         const sucesso = deletarTarefaExistente(id);
         if (sucesso) {
@@ -59,8 +56,7 @@ export function deletarTarefaController(req: Request, res: Response, id: number)
             res.status(404).json({ message: "Tarefa não encontrada" });
         }
     } catch (error) {
-        const mensagemErro = error instanceof Error ? error.message : "Erro desconhecido";
-        res.status(400).json({ message: mensagemErro });
+        next(error); // Passa o erro para o middleware de tratamento de erros
     }
 }
 
