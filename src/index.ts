@@ -2,10 +2,11 @@
 import { criarTarefaController, listarTarefasController, buscarTarefaPorIdController, atualizarTarefaController, deletarTarefaController } from "./controllers/task.controller";
 import express from "express";
 import { errorHandler } from "./middlewares/errorHandler";
+import cors from "cors";
 
 const app = express(); // Inicializa o Express
 app.use(express.json()); // Middleware para parsear JSON
-
+app.use(cors()); // Middleware para habilitar CORS
 const PORT: number = 3000;
 
 app.get("/tarefas", (req, res) => {
